@@ -12,7 +12,7 @@ simpler, and less stressful. We do this by having the app display open spaces an
 **Git:** 2.43.0.windows.1 | 2.48.1 (mac version)
 
 ### Libraries
-OpenCV: 
+**OpenCV:** 
 
 ## Installation
 ### Python:
@@ -22,12 +22,12 @@ OpenCV:
 
 ### Swift/SwiftUI:
 
-### Libraries:
-
-#### Git:
+### Git:
 1. Go to [https://git-scm.com/downloads](url) and download the correct version for your device.
 2. Once downloaded, open the file and follow the instructions of the pop-up.
 3. To make sure that it is properly downloaded, launch cmd prompt and type in "git --version". It should show that you have it downloaded by showing the current version installed.
+
+### Libraries:
 
 ## Usage Guide:
 
