@@ -10,7 +10,7 @@ simpler, and less stressful. We do this by having the app display open spaces an
 3. To ensure it is properly downloaded, launch cmd prompt and type in "python --version". It should show that you have it downloaded by showing the current version installed.
 
 ### Swift - 6.0.3
-1. Got to [https://www.swift.org/install/linux/](url) and download the correct version
+1. Got to [https://www.swift.org/install/linux/](url) and download the correct version for your device.
 2. Once downloaded, open the file and follow the pop-up instructions.
 ### Git - 2.43.0.windows.1 | 2.48.1 (MacOS)
 1. Go to [https://git-scm.com/downloads](url) and download the correct version for your device.
