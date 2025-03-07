@@ -1,14 +1,11 @@
 import unittest
 
 def validate_location(location):
-    """Checks if location is a non-empty string with a maximum length of 255 characters."""
     return isinstance(location, str) and bool(location) and len(location) <= 255
 
 def validate_time_between_locations(time):
-    """Ensures time is a positive integer between 1 and 1440 minutes (24 hours)."""
     return isinstance(time, int) and 0 < time <= 1440
 
-# Unit Tests
 class TestLocationValidation(unittest.TestCase):
     def test_valid_location(self):
         self.assertTrue(validate_location("validLocation"))
@@ -35,7 +32,7 @@ class TestTimeBetweenLocationsValidation(unittest.TestCase):
     def test_exceeding_max_time(self):
         self.assertFalse(validate_time_between_locations(1441))
     def test_non_integer_time(self):
-        self.assertFalse(validate_time_between_locations("60"))  # Ensuring only integers are allowed
+        self.assertFalse(validate_time_between_locations("60"))  
 
 if __name__ == '__main__':
     unittest.main()
