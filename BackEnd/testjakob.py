@@ -18,11 +18,11 @@ class TestLocationValidation(unittest.TestCase):
         exceeding_length_location = "a" * 256
         self.assertFalse(validate_location(exceeding_length_location))
     def test_non_string_location(self):
-        self.assertFalse(validate_location(123))  # Ensuring only strings are allowed
+        self.assertFalse(validate_location(123)) 
 
 class TestTimeBetweenLocationsValidation(unittest.TestCase):
     def test_valid_time(self):
-        self.assertTrue(validate_time_between_locations(60))  # Example valid time
+        self.assertTrue(validate_time_between_locations(60))  
     def test_zero_time(self):
         self.assertFalse(validate_time_between_locations(0))
     def test_negative_time(self):
