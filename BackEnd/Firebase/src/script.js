@@ -10,24 +10,25 @@ const database = getDatabase(app);
 let button = document.getElementById("button");
 
 button.addEventListener("click", function () {
-  let name = document.getElementById("name").value;
-  let country = document.getElementById("country").value;
+  //get values from input fields
+  let lotName = document.getElementById("lotName").value;
+  let lotCapacity = document.getElementById("lotCapacity").value;
 
-  if (name === "" || country === "") {
-    alert("Please fill in all fields.");
-  } else {
-    const data = {
-      name: name,
-      country: country
+  //print error if input fields are empty
+  if (lotName === "" || lotCapacity === "") {
+    alert("Please enter all fields.");
+  } 
+  else {
+    //make object to store in database
+    const parkingData = {
+      lotName: lotName,
+      lotCapacity: lotCapacity
     };
 
-    const recordsRef = ref(database, "records");  
-    push(recordsRef, data)                       //push data
-      .then(() => {
-        alert("Data saved successfully!");
-      })
-      .catch((error) => {
-        console.error("Error saving data:", error);
-      });
+    //save data to firebase realtime database    
+    const reference = ref(database, "parkingData"); //create reference to the database
+
+    //push object to reference parkingData
+    push(reference, parkingData);
   }
 });
