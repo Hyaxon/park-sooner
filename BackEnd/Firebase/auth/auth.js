@@ -1,9 +1,10 @@
 //import firebase modules from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
 import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-import { firebaseConfig } from './config.js'; //import firebase configuration file from config.js
+import { getAuth, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js"; //import google auth provider and sign in with popup function
+import { firebaseConfig } from './config.js'; //import firebase configuration file from config.js
+
 const app = initializeApp(firebaseConfig); //initialize firebase app with configuration file
 
 //get references to real time database and authentication
@@ -59,5 +60,17 @@ signInGoogleButton.addEventListener("click", function () {
             alert(error.message); //alert user if there is an error signing in
         });
 }); 
+
+//sign out
+let signOutButton = document.getElementById("signOutButton");
+//add event listener to sign out button
+signOutButton.addEventListener("click", function () {   
+    //use firebase authentication to sign out user 
+    signOut(auth).then(() => {
+        alert("User signed out successfully!"); //alert user that they have signed out successfully
+    }).catch((error) => {
+        alert(error.message); //alert user if there is an error signing out
+    });
+});
 
 
