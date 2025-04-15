@@ -1,5 +1,5 @@
 import { Button, StyleSheet, Text, View, Image } from 'react-native'
-import React from 'react'
+import { Link } from 'expo-router'
 
 import Logo from '../assets/img/ParkSoonerLogoSmall.png'
 
@@ -12,7 +12,14 @@ const Home = () => {
 
         <View style={styles.card}>
             <Text>First card on the app!</Text>
+           
         </View>
+        <View style={[styles.card, {marginTop: 20}]}>
+            <Text>Second card on the app!</Text>
+           
+        </View>
+        
+        <Link href="/about">About Page</Link>
 
     </View>
    
