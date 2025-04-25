@@ -17,6 +17,7 @@ const Home = () => {
       </ThemedText>
       <Spacer />
       <Link href="/login">Login Page</Link>
+      <Link href="/lots">Lots Page</Link>
     </ThemedView>
   );
 };
