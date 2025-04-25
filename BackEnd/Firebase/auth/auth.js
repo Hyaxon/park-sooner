@@ -50,16 +50,41 @@ signInGoogleButton.addEventListener("click", function () {
             // The signed-in user info.
             const user = result.user;
 
-            //store user information to database
-            set(ref(database, 'users/' + user.uid), {
-                email: user.email,
-                fullName: user.displayName, 
-              });
-            alert("Signed in with Google as " + user.displayName); //alert user that they have signed in successfully
-        }).catch((error) => {
-            alert(error.message); //alert user if there is an error signing in
+            // Validate user object before storing it
+            try {
+                if (checkType(user)) {
+                    set(ref(database, 'users/' + user.uid), {
+                        email: user.email,
+                        fullName: user.displayName,
+                    });
+                    alert("Signed in with Google as " + user.displayName);
+                }
+            } catch (error) {
+                console.error(error.message);
+                alert("Failed to validate user object.");
+            }
+        })
+        .catch((error) => {
+            alert(error.message);
         });
 }); 
+
+
+// MultiFactor Authentication for CWE-843: Access of Resource Using Incompatible Type ('Type Confusion')
+function checkType(user) {
+    // Check if the user is a valid object
+    if (user && typeof user === 'object') {
+        if (user.email && typeof user.email === 'string') {
+            alert("User email is valid: " + user.email);
+            return true; 
+        } else {
+            throw new Error('Invalid user object for email: Expected a string');
+        }
+    } else {
+        throw new Error('Invalid user object for type check: Expected an object');
+    }
+}
+
 
 //sign out
 let signOutButton = document.getElementById("signOutButton");
