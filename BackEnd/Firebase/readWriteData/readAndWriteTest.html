@@ -4,13 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Firebase Save and Write Data</title>
+  <title>Firebase Read and Write Data for Admin</title>
 </head>
 
 <body>
-  <input type="text" id="lotName" placeholder="lot_name" />
+  <input type="text" id="lotName" placeholder="name_lot" />
   <input type="text" id="lotCapacity" placeholder="Max Capacity" />
-  <input type="text" id="hourlyRate" placeholder="Hourly Rate (if applicable)" />
   <label><input type="checkbox" name="permit" value="Commuter"> Commuter</label>
   <label><input type="checkbox" name="permit" value="Faculty"> Faculty</label>
   <label><input type="checkbox" name="permit" value="Housing"> Housing</label>
@@ -18,6 +17,7 @@
   <label><input type="checkbox" name="permit" value="Pay Stations"> Pay Stations</label>
   <button id="saveButton">Save Data</button>
   <button id="readButton">Read Data</button>
+  <button id="fetchRatesButton">Get Parking Rates</buttib>
   <script type="module" src="readWrite.js"></script>
 </body>
 

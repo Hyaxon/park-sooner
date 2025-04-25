@@ -11,7 +11,7 @@ const app = initializeApp(firebaseConfig); //initialize firebase app with config
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-//sign up with email and password 
+//sign up with email and password function
 let signUpButton = document.getElementById("signUpButton");
 //add event listener to sign up button
 signUpButton.addEventListener("click", function () {
@@ -49,13 +49,13 @@ signInGoogleButton.addEventListener("click", function () {
             const token = credential.accessToken;
             // The signed-in user info.
             const user = result.user;
-
+            console.log(user); //log user information to console for debugging purposes
             //store user information to database
             set(ref(database, 'users/' + user.uid), {
                 email: user.email,
                 fullName: user.displayName, 
               });
-            alert("Signed in with Google as " + user.displayName); //alert user that they have signed in successfully
+            console.log("Signed in with Google as " + user.displayName); //alert user that they have signed in successfully
         }).catch((error) => {
             alert(error.message); //alert user if there is an error signing in
         });
