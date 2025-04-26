@@ -12,8 +12,13 @@
   <input type="text" id="lotName" placeholder="name_lot" />
   <input type="text" id="lotCapacity" placeholder="Max Capacity" />
   <input type="text" id="lotAddress" placeholder="Location" />
-  <input type="text" id="latitude" placeholder="latitude" />
-  <input type="text" id="longitude" placeholder="longitude" />
+  <div id="walkTimesContainer">
+    <div class="walkTimeEntry">
+      <input type="text" class="destination" placeholder="Destination Name" />
+      <input type="text" class="time" placeholder="Walk Time (e.g., 5 min)" />
+    </div>
+  </div>
+  <button id="addWalkTimeButton">Add Another Destination</button>
   <label><input type="checkbox" name="permit" value="Commuter"> Commuter</label>
   <label><input type="checkbox" name="permit" value="Faculty"> Faculty</label>
   <label><input type="checkbox" name="permit" value="Housing"> Housing</label>
