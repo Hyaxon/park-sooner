@@ -8,18 +8,32 @@
 </head>
 
 <body>
+  <h1>Firebase Read and Write Parking Data for Admin</h1>
   <input type="text" id="lotName" placeholder="name_lot" />
   <input type="text" id="lotCapacity" placeholder="Max Capacity" />
   <input type="text" id="lotAddress" placeholder="Location" />
+  <input type="text" id="latitude" placeholder="latitude" />
+  <input type="text" id="longitude" placeholder="longitude" />
   <label><input type="checkbox" name="permit" value="Commuter"> Commuter</label>
   <label><input type="checkbox" name="permit" value="Faculty"> Faculty</label>
   <label><input type="checkbox" name="permit" value="Housing"> Housing</label>
   <label><input type="checkbox" name="permit" value="Visitor"> Visitor</label>
   <label><input type="checkbox" name="permit" value="Pay Stations"> Pay Stations</label>
+  <h3>Average Lot Capacities (%)</h3>
+  <input class="capacityInput" data-time="7am" placeholder="7am %" type="number" step="0.1"><br>
+  <input class="capacityInput" data-time="8am" placeholder="8am %" type="number" step="0.1"><br>
+  <input class="capacityInput" data-time="9am" placeholder="9am %" type="number" step="0.1"><br>
+  <input class="capacityInput" data-time="10am" placeholder="10am %" type="number" step="0.1"><br>
+  <input class="capacityInput" data-time="11am" placeholder="11am %" type="number" step="0.1"><br>
+  <input class="capacityInput" data-time="12pm" placeholder="12pm %" type="number" step="0.1"><br>
+  <input class="capacityInput" data-time="1pm" placeholder="1pm %" type="number" step="0.1"><br>
+  <input class="capacityInput" data-time="2pm" placeholder="2pm %" type="number" step="0.1"><br>
+  <input class="capacityInput" data-time="3pm" placeholder="3pm %" type="number" step="0.1"><br>
+  <input class="capacityInput" data-time="4pm" placeholder="4pm %" type="number" step="0.1"><br>
+  <input class="capacityInput" data-time="5pm" placeholder="5pm %" type="number" step="0.1"><br>
+  <button id="signInGoogleButton">Admin Sign In</button>
   <button id="saveButton">Save Data</button>
   <button id="fetchRatesButton">Get Parking Rates</button>
-  <button id="signInGoogleButton">Admin Sign In</button>
-
   <script type="module" src="readWrite.js"></script>
 </body>
 

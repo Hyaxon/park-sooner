@@ -65,6 +65,13 @@ saveButton.addEventListener("click", function () {
   let lotName = document.getElementById("lotName").value;
   let lotCapacity = document.getElementById("lotCapacity").value;
   let lotAddress = document.getElementById("lotAddress").value; 
+  let latitude = document.getElementById("latitude").value;
+  let longitude = document.getElementById("longitude").value;
+
+  if (lotName === "" || lotCapacity === "" || lotAddress === "") {
+    alert("Please fill in all fields.");
+    return;
+  }
 
   // Get selected permit types and their rates
   const parkingRates = {};
@@ -73,12 +80,23 @@ saveButton.addEventListener("click", function () {
     parkingRates[permitType] = defaultRates[permitType] || ""; // Use default rate, or empty string if not found
   });
 
+  //get average percent full for each hour from 7am to 5pm
+  const averageLotCapacities = {};
+  document.querySelectorAll('.capacityInput').forEach((input) => {
+  const time = input.getAttribute('data-time');
+  averageLotCapacities[time] = parseFloat(input.value) || 0;
+});
+
+
   //create object to store parking lot information in database
   const parkingData = {
     lotName: lotName,
     lotAddress: lotAddress,
     lotCapacity: lotCapacity,
-    parkingRates: parkingRates // Use parkingRates here
+    latitude: latitude,
+    longitude: longitude,
+    parkingRates: parkingRates, // Use parkingRates here
+    averageLotCapacities: averageLotCapacities
   };
 
   //write parking data to firebase with lot_name as key
