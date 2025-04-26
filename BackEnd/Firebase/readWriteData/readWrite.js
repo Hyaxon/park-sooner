@@ -64,6 +64,7 @@ saveButton.addEventListener("click", function () {
   //get values from input fields
   let lotName = document.getElementById("lotName").value;
   let lotCapacity = document.getElementById("lotCapacity").value;
+  let lotAddress = document.getElementById("lotAddress").value; 
 
   // Get selected permit types and their rates
   const parkingRates = {};
@@ -75,6 +76,7 @@ saveButton.addEventListener("click", function () {
   //create object to store parking lot information in database
   const parkingData = {
     lotName: lotName,
+    lotAddress: lotAddress,
     lotCapacity: lotCapacity,
     parkingRates: parkingRates // Use parkingRates here
   };
@@ -129,3 +131,4 @@ let fetchRatesButton = document.getElementById("fetchRatesButton");
     let lot = document.getElementById("lotName").value; // Correct ID
     getParkingRates(lot); // Call the function with the lot name
   });
+
