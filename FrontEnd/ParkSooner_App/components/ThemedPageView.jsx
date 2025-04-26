@@ -4,9 +4,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import ThemedView from "./ThemedView";
 import ThemedText from "./ThemedText";
-import Spacer from "./Spacer";
 
-const ThemedPageView = ({ style, safe = false, children }) => {
+const ThemedPageView = ({ style, safe = false, title, children }) => {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme] ?? Colors.light;
 
@@ -18,7 +17,7 @@ const ThemedPageView = ({ style, safe = false, children }) => {
     <Container
       style={[
         {
-          backgroundColor: theme.background,
+          backgroundColor: theme.primary,
           paddingTop: safe ? insets.top : 0,
           flex: 1,
         },
@@ -26,10 +25,16 @@ const ThemedPageView = ({ style, safe = false, children }) => {
       ]}>
       {/* Top Bar */}
       <View style={styles.topBar}>
-        <ThemedText title={true}>Campus Map</ThemedText>
+        <ThemedText
+          title={true}
+          style={{ color: Colors["dark"].title, fontSize: 24 }}>
+          {title}
+        </ThemedText>
       </View>
 
-      <View style={{ flex: 1 }}>{children}</View>
+      <View style={{ flex: 1, backgroundColor: theme.background }}>
+        {children}
+      </View>
     </Container>
   );
 };
