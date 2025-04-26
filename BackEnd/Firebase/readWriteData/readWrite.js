@@ -64,7 +64,7 @@ document.getElementById("addWalkTimeButton")?.addEventListener("click", () => {
   container.appendChild(newEntry);
 });
 
-// Unified Save Handler
+// Unified Save Handler with Walk Time Preservation
 document.getElementById("saveButton")?.addEventListener("click", function () {
   const lotName = document.getElementById("lotName").value.trim();
   const lotCapacity = document.getElementById("lotCapacity").value.trim();
@@ -79,11 +79,11 @@ document.getElementById("saveButton")?.addEventListener("click", function () {
   const parkingRef = ref(database, 'parkingData/' + sanitizedLotName);
 
   // Collect form data
-  const walkTimes = {};
+  const formWalkTimes = {};
   document.querySelectorAll("#walkTimesContainer .walkTimeEntry").forEach(entry => {
     const destination = entry.querySelector(".destination").value.trim();
     const time = entry.querySelector(".time").value.trim();
-    if (destination && time) walkTimes[destination] = time;
+    if (destination && time) formWalkTimes[destination] = time;
   });
 
   const parkingRates = {};
@@ -96,16 +96,28 @@ document.getElementById("saveButton")?.addEventListener("click", function () {
     const updates = {};
     if (lotCapacity) updates.lotCapacity = lotCapacity;
     if (lotAddress) updates.lotAddress = lotAddress;
-    if (Object.keys(walkTimes).length > 0) updates.walkTimes = walkTimes;
     if (Object.keys(parkingRates).length > 0) updates.parkingRates = parkingRates;
 
     if (snapshot.exists()) {
+      // Merge existing walk times with new entries
+      const existingData = snapshot.val();
+      const mergedWalkTimes = {
+        ...(existingData.walkTimes || {}),
+        ...formWalkTimes  // New entries override existing ones with same destination
+      };
+      
+      if (Object.keys(mergedWalkTimes).length > 0) {
+        updates.walkTimes = mergedWalkTimes;
+      }
+
       update(parkingRef, updates)
         .then(() => alert('Data updated successfully!'))
         .catch(error => console.error("Update error:", error));
     } else {
+      // For new entries, use form data directly
       set(parkingRef, { 
         lotName, 
+        walkTimes: formWalkTimes,
         ...updates,
         created: new Date().toISOString() 
       })
