@@ -5,40 +5,115 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Firebase Read and Write Data for Admin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .form-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    input, button {
+      margin: 5px 0;
+      padding: 8px;
+    }
+    button {
+      cursor: pointer;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #3367d6;
+    }
+    .checkbox-group {
+      margin: 10px 0;
+    }
+    .checkbox-group label {
+      display: inline-block;
+      margin-right: 15px;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Firebase Read and Write Parking Data for Admin</h1>
-  <input type="text" id="lotName" placeholder="name_lot" />
-  <input type="text" id="lotCapacity" placeholder="Max Capacity" />
-  <input type="text" id="lotAddress" placeholder="Location" />
-  <div id="walkTimesContainer">
-    <div class="walkTimeEntry">
-      <input type="text" class="destination" placeholder="Destination Name" />
-      <input type="text" class="time" placeholder="Walk Time (e.g., 5 min)" />
+  <h1>Firebase Parking Data Admin</h1>
+  
+  <div class="form-section">
+    <h2>Basic Lot Information</h2>
+    <input type="text" id="lotId" placeholder="Lot ID (e.g., asp_lot)" required />
+    <input type="text" id="lotName" placeholder="Lot Name" required />
+    <input type="text" id="lotCapacity" placeholder="Max Capacity" required />
+    <input type="text" id="lotAddress" placeholder="Full Address" required />
+    <div>
+      <label>Latitude: <input type="number" id="lat" step="0.0001" placeholder="35.2057" required /></label>
+      <label>Longitude: <input type="number" id="long" step="0.0001" placeholder="-97.4438" required /></label>
     </div>
   </div>
-  <button id="addWalkTimeButton">Add Another Destination</button>
-  <label><input type="checkbox" name="permit" value="Commuter"> Commuter</label>
-  <label><input type="checkbox" name="permit" value="Faculty"> Faculty</label>
-  <label><input type="checkbox" name="permit" value="Housing"> Housing</label>
-  <label><input type="checkbox" name="permit" value="Visitor"> Visitor</label>
-  <label><input type="checkbox" name="permit" value="Pay Stations"> Pay Stations</label>
-  <h3>Average Lot Capacities (%)</h3>
-  <input class="capacityInput" data-time="7am" placeholder="7am %" type="number" step="0.1"><br>
-  <input class="capacityInput" data-time="8am" placeholder="8am %" type="number" step="0.1"><br>
-  <input class="capacityInput" data-time="9am" placeholder="9am %" type="number" step="0.1"><br>
-  <input class="capacityInput" data-time="10am" placeholder="10am %" type="number" step="0.1"><br>
-  <input class="capacityInput" data-time="11am" placeholder="11am %" type="number" step="0.1"><br>
-  <input class="capacityInput" data-time="12pm" placeholder="12pm %" type="number" step="0.1"><br>
-  <input class="capacityInput" data-time="1pm" placeholder="1pm %" type="number" step="0.1"><br>
-  <input class="capacityInput" data-time="2pm" placeholder="2pm %" type="number" step="0.1"><br>
-  <input class="capacityInput" data-time="3pm" placeholder="3pm %" type="number" step="0.1"><br>
-  <input class="capacityInput" data-time="4pm" placeholder="4pm %" type="number" step="0.1"><br>
-  <input class="capacityInput" data-time="5pm" placeholder="5pm %" type="number" step="0.1"><br>
-  <button id="signInGoogleButton">Admin Sign In</button>
-  <button id="saveButton">Save Data</button>
-  <button id="fetchRatesButton">Get Parking Rates</button>
+
+  <div class="form-section">
+    <h2>Walk Times (minutes)</h2>
+    <div id="walkTimesContainer">
+      <div class="walkTimeEntry">
+        <input type="text" class="destination" placeholder="Destination (e.g., bizzellLibrary)" />
+        <input type="number" class="time" placeholder="Minutes (e.g., 5)" />
+      </div>
+    </div>
+    <button id="addWalkTimeButton">Add Another Destination</button>
+  </div>
+
+  <div class="form-section">
+    <h2>Pass Types</h2>
+    <div class="checkbox-group">
+      <label><input type="checkbox" name="passType" value="commuter"> Commuter</label>
+      <label><input type="checkbox" name="passType" value="faculty"> Faculty</label>
+      <label><input type="checkbox" name="passType" value="housing"> Housing</label>
+      <label><input type="checkbox" name="passType" value="free"> Free</label>
+      <label><input type="checkbox" name="passType" value="paid"> Paid</label>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h2>Parking Rates</h2>
+    <div id="parkingRatesContainer">
+      <div class="rateEntry">
+        <input type="text" class="rateType" placeholder="Rate Type (e.g., Commuter)" />
+        <input type="text" class="rateValue" placeholder="Rate (e.g., $300/year)" />
+      </div>
+    </div>
+    <button id="addRateButton">Add Another Rate</button>
+  </div>
+
+  <div class="form-section">
+    <h2>Average Lot Capacities (%)</h2>
+    <div class="capacity-grid">
+      <input class="capacityInput" data-time="7am" placeholder="7am %" type="number" min="0" max="100" step="1"><br>
+      <input class="capacityInput" data-time="8am" placeholder="8am %" type="number" min="0" max="100" step="1"><br>
+      <input class="capacityInput" data-time="9am" placeholder="9am %" type="number" min="0" max="100" step="1"><br>
+      <input class="capacityInput" data-time="10am" placeholder="10am %" type="number" min="0" max="100" step="1"><br>
+      <input class="capacityInput" data-time="11am" placeholder="11am %" type="number" min="0" max="100" step="1"><br>
+      <input class="capacityInput" data-time="12pm" placeholder="12pm %" type="number" min="0" max="100" step="1"><br>
+      <input class="capacityInput" data-time="1pm" placeholder="1pm %" type="number" min="0" max="100" step="1"><br>
+      <input class="capacityInput" data-time="2pm" placeholder="2pm %" type="number" min="0" max="100" step="1"><br>
+      <input class="capacityInput" data-time="3pm" placeholder="3pm %" type="number" min="0" max="100" step="1"><br>
+      <input class="capacityInput" data-time="4pm" placeholder="4pm %" type="number" min="0" max="100" step="1"><br>
+      <input class="capacityInput" data-time="5pm" placeholder="5pm %" type="number" min="0" max="100" step="1"><br>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <button id="signInGoogleButton">Admin Sign In</button>
+    <button id="saveButton">Save Data</button>
+    <button id="fetchDataButton">Fetch Data</button>
+    <button id="signOutButton" style="background-color: #f44336;">Sign Out</button>
+  </div>
+
   <script type="module" src="readWrite.js"></script>
 </body>
 

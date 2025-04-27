@@ -1,181 +1,258 @@
-// Import modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-import { getDatabase, ref, set, push, onValue, get, update } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import { firebaseConfig } from './config.js';
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
 const auth = getAuth(app);
+const database = getDatabase(app);
 
-// Track authentication state
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    console.log("User is logged in:", user.uid);
-  } else {
-    console.log("No user is logged in");
-  }
+// DOM elements
+const lotIdInput = document.getElementById('lotId');
+const lotNameInput = document.getElementById('lotName');
+const lotCapacityInput = document.getElementById('lotCapacity');
+const lotAddressInput = document.getElementById('lotAddress');
+const latInput = document.getElementById('lat');
+const longInput = document.getElementById('long');
+const walkTimesContainer = document.getElementById('walkTimesContainer');
+const addWalkTimeButton = document.getElementById('addWalkTimeButton');
+const parkingRatesContainer = document.getElementById('parkingRatesContainer');
+const addRateButton = document.getElementById('addRateButton');
+const saveButton = document.getElementById('saveButton');
+const fetchDataButton = document.getElementById('fetchDataButton');
+const signInGoogleButton = document.getElementById('signInGoogleButton');
+const signOutButton = document.getElementById('signOutButton');
+
+// Add walk time field
+addWalkTimeButton.addEventListener('click', () => {
+  const div = document.createElement('div');
+  div.className = 'walkTimeEntry';
+  div.innerHTML = `
+    <input type="text" class="destination" placeholder="Destination (e.g., bizzellLibrary)" />
+    <input type="number" class="time" placeholder="Minutes (e.g., 5)" />
+    <button class="removeButton" type="button">Remove</button>
+  `;
+  walkTimesContainer.appendChild(div);
+  
+  // Add remove functionality
+  div.querySelector('.removeButton').addEventListener('click', () => {
+    div.remove();
+  });
 });
 
-// Parking rates configuration
-const defaultRates = {
-  Commuter: "$300/year",
-  Faculty: "$326/year",
-  Housing: "$350/year",
-  Visitor: "$3.00/day",
-  "Pay Stations": "$1.50/hour"
-};
+// Add parking rate field
+addRateButton.addEventListener('click', () => {
+  const div = document.createElement('div');
+  div.className = 'rateEntry';
+  div.innerHTML = `
+    <input type="text" class="rateType" placeholder="Rate Type (e.g., Commuter)" />
+    <input type="text" class="rateValue" placeholder="Rate (e.g., $300/year)" />
+    <button class="removeButton" type="button">Remove</button>
+  `;
+  parkingRatesContainer.appendChild(div);
+  
+  // Add remove functionality
+  div.querySelector('.removeButton').addEventListener('click', () => {
+    div.remove();
+  });
+});
 
-// Google Sign-In Handler
-const provider = new GoogleAuthProvider();
-document.getElementById("signInGoogleButton")?.addEventListener("click", () => {
+// Google Sign In
+signInGoogleButton.addEventListener('click', () => {
+  const provider = new GoogleAuthProvider();
   signInWithPopup(auth, provider)
     .then((result) => {
       const user = result.user;
-      if (checkType(user)) {
-        set(ref(database, 'users/' + user.uid), {
-          email: user.email,
-          fullName: user.displayName,
-        });
-        alert("Signed in with Google as " + user.displayName);
-      }
+      alert(`Signed in as ${user.email}`);
     })
-    .catch((error) => alert(error.message));
+    .catch((error) => {
+      alert(`Sign-in error: ${error.message}`);
+    });
 });
 
-// Type Validation
-function checkType(user) {
-  if (user && typeof user === 'object' && typeof user.email === 'string') {
-    return true;
-  }
-  throw new Error('Invalid user object');
-}
-
-// Walk Time Input Management
-document.getElementById("addWalkTimeButton")?.addEventListener("click", () => {
-  const container = document.getElementById("walkTimesContainer");
-  const newEntry = document.createElement("div");
-  newEntry.classList.add("walkTimeEntry");
-  newEntry.innerHTML = `
-    <input type="text" class="destination" placeholder="Destination Name" />
-    <input type="text" class="time" placeholder="Walk Time (e.g., 5 min)" />
-  `;
-  container.appendChild(newEntry);
+// Sign Out
+signOutButton.addEventListener('click', () => {
+  signOut(auth)
+    .then(() => {
+      alert('Signed out successfully');
+    })
+    .catch((error) => {
+      alert(`Sign-out error: ${error.message}`);
+    });
 });
 
-// Unified Save Handler with Walk Time Preservation
-document.getElementById("saveButton")?.addEventListener("click", function () {
-  const lotName = document.getElementById("lotName").value.trim();
-  const lotCapacity = document.getElementById("lotCapacity").value.trim();
-  const lotAddress = document.getElementById("lotAddress").value.trim();
-
-  if (!lotName) {
-    alert("Parking lot name is required!");
+// Save data to Firebase
+saveButton.addEventListener('click', () => {
+  if (!auth.currentUser) {
+    alert('Please sign in first');
     return;
   }
 
-  const sanitizedLotName = lotName.replace(/[.#$\[\]\/]/g, "_");
-  const parkingRef = ref(database, 'parkingData/' + sanitizedLotName);
+  const lotId = lotIdInput.value.trim();
+  if (!lotId) {
+    alert('Please enter a Lot ID');
+    return;
+  }
 
-  // Collect form data
-  const formWalkTimes = {};
-  document.querySelectorAll("#walkTimesContainer .walkTimeEntry").forEach(entry => {
-    const destination = entry.querySelector(".destination").value.trim();
-    const time = entry.querySelector(".time").value.trim();
-    if (destination && time) formWalkTimes[destination] = time;
+  // Collect walk times
+  const walkTimes = {};
+  document.querySelectorAll('.walkTimeEntry').forEach(entry => {
+    const destination = entry.querySelector('.destination').value.trim();
+    const time = entry.querySelector('.time').value.trim();
+    if (destination && time) {
+      walkTimes[destination] = parseInt(time);
+    }
   });
 
+  // Collect parking rates
   const parkingRates = {};
-  document.querySelectorAll('input[name="permit"]:checked').forEach(checkbox => {
-    parkingRates[checkbox.value] = defaultRates[checkbox.value] || "";
+  document.querySelectorAll('.rateEntry').forEach(entry => {
+    const type = entry.querySelector('.rateType').value.trim();
+    const value = entry.querySelector('.rateValue').value.trim();
+    if (type && value) {
+      parkingRates[type] = value;
+    }
   });
 
-  // Update or create logic
-  get(parkingRef).then((snapshot) => {
-    const updates = {};
-    if (lotCapacity) updates.lotCapacity = lotCapacity;
-    if (lotAddress) updates.lotAddress = lotAddress;
-    if (Object.keys(parkingRates).length > 0) updates.parkingRates = parkingRates;
+  // Collect pass types
+  const passTypes = {
+    commuter: document.querySelector('input[name="passType"][value="commuter"]').checked,
+    faculty: document.querySelector('input[name="passType"][value="faculty"]').checked,
+    housing: document.querySelector('input[name="passType"][value="housing"]').checked,
+    free: document.querySelector('input[name="passType"][value="free"]').checked,
+    paid: document.querySelector('input[name="passType"][value="paid"]').checked
+  };
 
-    if (snapshot.exists()) {
-      // Merge existing walk times with new entries
-      const existingData = snapshot.val();
-      const mergedWalkTimes = {
-        ...(existingData.walkTimes || {}),
-        ...formWalkTimes  // New entries override existing ones with same destination
-      };
-      
-      if (Object.keys(mergedWalkTimes).length > 0) {
-        updates.walkTimes = mergedWalkTimes;
-      }
-
-      update(parkingRef, updates)
-        .then(() => alert('Data updated successfully!'))
-        .catch(error => console.error("Update error:", error));
-    } else {
-      // For new entries, use form data directly
-      set(parkingRef, { 
-        lotName, 
-        walkTimes: formWalkTimes,
-        ...updates,
-        created: new Date().toISOString() 
-      })
-      .then(() => alert('New lot created!'))
-      .catch(error => console.error("Create error:", error));
+  // Collect average capacities
+  const averageLotCapacities = {};
+  document.querySelectorAll('.capacityInput').forEach(input => {
+    const time = input.getAttribute('data-time');
+    const value = input.value.trim();
+    if (time && value) {
+      averageLotCapacities[time] = parseInt(value);
     }
-  }).catch(error => console.error("Existence check error:", error));
-});
+  });
 
-// Data Retrieval Handlers
-document.getElementById("readButton")?.addEventListener("click", function () {
-  const lotName = document.getElementById("lotName").value.trim();
-  if (!lotName) return alert("Please enter a lot name");
+  // Prepare data object
+  const parkingData = {
+    lotName: lotNameInput.value.trim(),
+    lotCapacity: lotCapacityInput.value.trim(),
+    lotAddress: lotAddressInput.value.trim(),
+    coordinates: {
+      lat: parseFloat(latInput.value),
+      long: parseFloat(longInput.value)
+    },
+    walkTimes,
+    parkingRates,
+    passTypes,
+    averageLotCapacities
+  };
 
-  get(ref(database, `parkingData/${lotName}`)).then((snapshot) => {
-    const data = snapshot.val();
-    if (!data) return alert("No data found");
-
-    // Populate form fields
-    document.getElementById("lotCapacity").value = data.lotCapacity || "";
-    document.getElementById("lotAddress").value = data.lotAddress || "";
-
-    // Populate walk times
-    const container = document.getElementById("walkTimesContainer");
-    container.innerHTML = "";
-    if (data.walkTimes) {
-      Object.entries(data.walkTimes).forEach(([dest, time]) => {
-        container.appendChild(createWalkTimeEntry(dest, time));
-      });
-    }
-
-    // Populate checkboxes
-    document.querySelectorAll('input[name="permit"]').forEach(checkbox => {
-      checkbox.checked = data.parkingRates?.[checkbox.value] !== undefined;
+  // Save to Firebase
+  set(ref(database, `parkingData/${lotId}`), parkingData)
+    .then(() => {
+      alert('Data saved successfully!');
+    })
+    .catch((error) => {
+      alert(`Error saving data: ${error.message}`);
     });
-
-    alert("Data loaded into form!");
-  }).catch(error => console.error("Read error:", error));
 });
 
-document.getElementById("fetchRatesButton")?.addEventListener("click", () => {
-  const lotName = document.getElementById("lotName").value.trim();
-  if (!lotName) return alert("Please enter a lot name");
+// Fetch data from Firebase
+fetchDataButton.addEventListener('click', () => {
+  const lotId = lotIdInput.value.trim();
+  if (!lotId) {
+    alert('Please enter a Lot ID');
+    return;
+  }
 
-  get(ref(database, `parkingData/${lotName}/parkingRates`)).then((snapshot) => {
-    const rates = snapshot.val();
-    rates ? alert(JSON.stringify(rates, null, 2)) : alert("No rates found");
-  }).catch(error => console.error("Rates fetch error:", error));
+  get(child(ref(database), `parkingData/${lotId}`))
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        
+        // Fill basic info
+        lotNameInput.value = data.lotName || '';
+        lotCapacityInput.value = data.lotCapacity || '';
+        lotAddressInput.value = data.lotAddress || '';
+        latInput.value = data.coordinates?.lat || '';
+        longInput.value = data.coordinates?.long || '';
+        
+        // Fill walk times
+        walkTimesContainer.innerHTML = '';
+        if (data.walkTimes) {
+          for (const [destination, time] of Object.entries(data.walkTimes)) {
+            const div = document.createElement('div');
+            div.className = 'walkTimeEntry';
+            div.innerHTML = `
+              <input type="text" class="destination" value="${destination}" />
+              <input type="number" class="time" value="${time}" />
+              <button class="removeButton" type="button">Remove</button>
+            `;
+            walkTimesContainer.appendChild(div);
+            div.querySelector('.removeButton').addEventListener('click', () => {
+              div.remove();
+            });
+          }
+        }
+        
+        // Fill parking rates
+        parkingRatesContainer.innerHTML = '';
+        if (data.parkingRates) {
+          for (const [rateType, rateValue] of Object.entries(data.parkingRates)) {
+            const div = document.createElement('div');
+            div.className = 'rateEntry';
+            div.innerHTML = `
+              <input type="text" class="rateType" value="${rateType}" />
+              <input type="text" class="rateValue" value="${rateValue}" />
+              <button class="removeButton" type="button">Remove</button>
+            `;
+            parkingRatesContainer.appendChild(div);
+            div.querySelector('.removeButton').addEventListener('click', () => {
+              div.remove();
+            });
+          }
+        }
+        
+        // Fill pass types
+        if (data.passTypes) {
+          document.querySelector('input[name="passType"][value="commuter"]').checked = data.passTypes.commuter || false;
+          document.querySelector('input[name="passType"][value="faculty"]').checked = data.passTypes.faculty || false;
+          document.querySelector('input[name="passType"][value="housing"]').checked = data.passTypes.housing || false;
+          document.querySelector('input[name="passType"][value="free"]').checked = data.passTypes.free || false;
+          document.querySelector('input[name="passType"][value="paid"]').checked = data.passTypes.paid || false;
+        }
+        
+        // Fill average capacities
+        if (data.averageLotCapacities) {
+          document.querySelectorAll('.capacityInput').forEach(input => {
+            const time = input.getAttribute('data-time');
+            if (data.averageLotCapacities[time]) {
+              input.value = data.averageLotCapacities[time];
+            }
+          });
+        }
+        
+        alert('Data loaded successfully!');
+      } else {
+        alert('No data found for this Lot ID');
+      }
+    })
+    .catch((error) => {
+      alert(`Error fetching data: ${error.message}`);
+    });
 });
 
-// Helper function
-function createWalkTimeEntry(destination = "", time = "") {
-  const div = document.createElement("div");
-  div.classList.add("walkTimeEntry");
-  div.innerHTML = `
-    <input type="text" class="destination" value="${destination}" />
-    <input type="text" class="time" value="${time}" />
-  `;
-  return div;
-}
-
+// Check auth state
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    console.log('User is signed in:', user.email);
+    signInGoogleButton.style.display = 'none';
+    signOutButton.style.display = 'inline-block';
+  } else {
+    console.log('User is signed out');
+    signInGoogleButton.style.display = 'inline-block';
+    signOutButton.style.display = 'none';
+  }
+});
