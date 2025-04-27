@@ -4,7 +4,7 @@ import { database, ref, onValue } from "../FirebaseConfig";
 const ParkingLotsContext = createContext();
 
 const isValidLot = (lot) => {
-  return lot.lotName && /*lot.lotAddress &&*/ lot.coordinates;
+  return lot.lotName && lot.lotAddress && lot.coordinates;
 };
 
 export const ParkingLotsProvider = ({ children }) => {

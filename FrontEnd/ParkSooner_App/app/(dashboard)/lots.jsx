@@ -6,16 +6,16 @@ import ThemedLotCard from "../../components/ThemedLotCard";
 import Spacer from "../../components/Spacer";
 
 const HOURS = [
-  "7AM",
-  "8AM",
-  "9AM",
-  "10AM",
-  "11AM",
-  "12PM",
-  "1PM",
-  "2PM",
-  "3PM",
-  "4PM",
+  "7am",
+  "8am",
+  "9am",
+  "10am",
+  "11am",
+  "12pm",
+  "1pm",
+  "2pm",
+  "3pm",
+  "4pm",
 ];
 
 const Lots = () => {
@@ -29,6 +29,8 @@ const Lots = () => {
     );
   }
 
+  console.log("Parking Lots:", parkingLots);
+
   return (
     <ThemedPageView safe={true} title="Parking Lots">
       <ScrollView style={styles.scrollview}>
@@ -36,7 +38,7 @@ const Lots = () => {
           const percentFullByHour = lot.averageLotCapacities
             ? HOURS.map((hour) => lot.averageLotCapacities?.[hour] ?? 0)
             : [1, 10, 20, 30, 40, 50, 60, 70, 80, 90]; // Default fallback if no data
-
+          console.log(percentFullByHour);
           return (
             <ThemedLotCard
               key={lot.id}
