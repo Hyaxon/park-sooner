@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import { database, ref, onValue } from "../FirebaseConfig";
 
 const ParkingLotsContext = createContext();
+const DropOffsContext = createContext();
 
 const isValidLot = (lot) => {
   return lot.lotName && lot.lotAddress && lot.coordinates;
@@ -40,3 +41,37 @@ export const ParkingLotsProvider = ({ children }) => {
 
 // Custom hook for easier usage
 export const useParkingLots = () => useContext(ParkingLotsContext);
+
+export const DropoffSpotsProvider = ({ children }) => {
+  const [dropoffSpots, setDropoffSpots] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const dropoffsRef = ref(database, "dropOffData");
+
+    const unsubscribe = onValue(dropoffsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const parsedLocations = Object.keys(data).map((key) => ({
+          id: key,
+          ...data[key],
+        }));
+        //const validLots = parsedLocations.filter((lot) => isValidLot(lot));
+
+        setDropoffSpots(parsedLocations);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <DropOffsContext.Provider value={{ dropoffSpots, loading }}>
+      {children}
+    </DropOffsContext.Provider>
+  );
+};
+
+// Custom hook for easier usage
+export const useDropoffSpots = () => useContext(DropOffsContext);
