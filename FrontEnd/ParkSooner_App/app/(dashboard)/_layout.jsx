@@ -1,10 +1,15 @@
+// React Native Imports
 import { Tabs } from "expo-router";
 import { Colors } from "../../constants/Colors";
 import { useColorScheme } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+
+// Firebase Context Imports
+// Stores the parking lot data and drop off data in the root layout of the dashboard, so each page does not have to fetch it every time
 import { ParkingLotsProvider } from "../../context/ParkingLotsContext";
 import { DropoffSpotsProvider } from "../../context/ParkingLotsContext";
 
+// Layout for the dashboard pages
 const DashboardLayout = () => {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme] ?? Colors.light;

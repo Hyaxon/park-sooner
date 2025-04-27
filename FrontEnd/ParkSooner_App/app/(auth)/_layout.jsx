@@ -1,6 +1,8 @@
+// React Native Imports
 import { Stack } from "expo-router";
 import { StatusBar } from "react-native";
 
+// Defines the layout for the authentication screens
 export default function AuthLayout() {
   return (
     <>

@@ -1,8 +1,9 @@
+// React Native Imports
 import React, { useState } from "react";
 import { Marker } from "react-native-maps";
 import MapViewCluster from "react-native-map-clustering";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-
+import { Ionicons } from "@expo/vector-icons";
 import {
   StyleSheet,
   ActivityIndicator,
@@ -10,46 +11,36 @@ import {
   View,
 } from "react-native";
 
+// Import Custom Components
 import ThemedText from "../../components/ThemedText";
 import ThemedPageView from "../../components/ThemedPageView";
 import ThemedCard from "../../components/ThemedCard";
+import Spacer from "../../components/Spacer";
 
+// Import context provider for parking lots and dropoff spots
 import {
   useDropoffSpots,
   useParkingLots,
 } from "../../context/ParkingLotsContext";
-import Spacer from "../../components/Spacer";
-import { Ionicons } from "@expo/vector-icons";
-
-const FILTERS = ["housing", "faculty", "commuter", "paid", "free", "dropoff"];
 
 const Map = () => {
+  // Use the parking lots and dropoff spots context to get the data
   const { parkingLots, loading } = useParkingLots();
   const { dropoffSpots, loadingDrop } = useDropoffSpots();
 
+  // State variables for managing filters and dropoff visibility
   const [showDropoffs, setShowDropoffs] = useState(false);
-
   const [showFilters, setShowFilters] = useState(false);
-
   const [selectedFilters, setSelectedFilters] = useState(["commuter"]);
 
-  const lotDataMap = {
-    commuter: parkingLots.filter((lot) => lot.passTypes === "commuter"),
-    housing: parkingLots.filter((lot) => lot.type === "housing"),
-    faculty: parkingLots.filter((lot) => lot.type === "faculty"),
-    paid: parkingLots.filter((lot) => lot.isPaid),
-    free: parkingLots.filter((lot) => lot.isFree),
-    dropoff: parkingLots.filter((lot) => lot.isDropoff),
-  };
-
+  // Filter the parking lots based on selected filters
   const dataToDisplay = parkingLots.filter((lot) => {
     // Check if the lot matches ANY selected filter
     return selectedFilters.some((filter) => lot.passTypes?.[filter] === true);
   });
-
-  console.log(dropoffSpots);
   const dropoffsToDisplay = showDropoffs ? dropoffSpots : [];
 
+  // If the context is still loading, show a loading indicator
   if (loading || loadingDrop) {
     return (
       <ThemedPageView safe={true} title="Campus Map">
