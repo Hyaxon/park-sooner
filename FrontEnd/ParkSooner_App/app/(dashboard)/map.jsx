@@ -103,6 +103,7 @@ const Map = () => {
                 paddingBottom: 10,
               }}>
               <BouncyCheckbox
+                isChecked={true}
                 onPress={(isChecked) => {
                   setSelectedFilters((prev) =>
                     isChecked

@@ -7,7 +7,7 @@ const ThemedCard = ({ style, ...props }) => {
 
   return (
     <View
-      style={[{ backgroundColor: theme.background }, styles.card, style]}
+      style={[{ backgroundColor: theme.cardBackground }, styles.card, style]}
       {...props}
     />
   );
