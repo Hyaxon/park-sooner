@@ -7,7 +7,8 @@ from openai import OpenAI
 
 load_dotenv()
 
-client = OpenAI(api_key = "OPENAI_API_KEY")
+client = OpenAI(api_key = os.environ['OPENAI_API_KEY'])
+
 
 def throttle(interval):
     def decorator(func):
@@ -21,7 +22,7 @@ def throttle(interval):
         return wrapper
     return decorator
 
-#@throttle(120)
+@throttle(120)
 def system_request():
 
     messages = [{"role": "system", "content": "You make parking predictions based on current parking data."}]
