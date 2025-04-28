@@ -71,6 +71,7 @@ prompt = (
     " parking rates - free "
     " pass types - no pass is needed "
     #" walk times - " + str(data['lloydNoble Test']['walkTimes']) +
+    "Commuter and housing passes cost $288 per academic year. Faculty passes cost $326 per calendar year. Reserved parking permits are available for the Elm and Asp parking facilities for $1,245 per calendar year."
     "Please use this information to answer any questions a user has and assist them with any parking-related issues. "
     "Be brief but detailed in using the numbers above."
     "Do not use numbers that conflict with the above data."
