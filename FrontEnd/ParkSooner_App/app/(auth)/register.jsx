@@ -56,9 +56,9 @@ const Register = () => {
         </ThemedText>
 
         <ThemedCard>
-          <ThemedText>Username</ThemedText>
+          <ThemedText>Emil</ThemedText>
           <TextInput
-            placeholder="Enter your username"
+            placeholder="Enter your email"
             value={email}
             onChangeText={setEmail}
           />

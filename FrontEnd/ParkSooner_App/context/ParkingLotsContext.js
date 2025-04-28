@@ -15,7 +15,6 @@ const isValidLot = (lot) => {
     lot.lotAddress &&
     lot.coordinates &&
     lot.passTypes &&
-    lot.walkTimes &&
     lot.lotCapacity
   );
 };
