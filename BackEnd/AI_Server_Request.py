@@ -5,7 +5,7 @@ import datetime
 import openai
 from openai import OpenAI
 from Parker_Fetch_Data import prompt
-from flask import Flask
+from flask import Flask, request, jsonify
 
 user_input = "Hi, i am a student here at OU. Please help me figure out whether I should buy a commuter pass. I go to class 5 times a week, mostly in Dale Hall and Devon, but sometimes in the Bizzell Library. I also go to the gym at the Sarkeys Fitness Center 3 times a week. I usually go to class around 10 am and leave around 2 pm. I also go to the library at least once a week, usually on Wednesdays. I have a car and I want to know if it is worth it to buy a commuter pass or if I should just pay for parking when I need it. Also please predict parking availability at relevant times."
 
@@ -43,15 +43,15 @@ def system_request():
                 max_tokens=500
             )
             reply = response.choices[0].message.content
-            return(reply)
+            return(jsonify({'status': 'success', 'message': reply}))
             #messages.append({"role": "system", "content": reply})
 
 
 #system_request()
 
-@app.route('/')
+@app.route('/chat', methods = ['POST', 'OPTIONS'])
 def home():
     return system_request()
 
 if __name__ == '__main__':
-    app.run(host = '0.0.0.0', debug=True)
+    app.run(host = '0.0.0.0', debug=True, port = 8000)
