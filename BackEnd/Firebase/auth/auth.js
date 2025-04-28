@@ -11,7 +11,7 @@ const app = initializeApp(firebaseConfig); //initialize firebase app with config
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-//sign up with email and password 
+//sign up with email and password function
 let signUpButton = document.getElementById("signUpButton");
 //add event listener to sign up button
 signUpButton.addEventListener("click", function () {

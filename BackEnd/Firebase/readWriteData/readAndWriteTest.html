@@ -4,20 +4,196 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Firebase Save and Write Data</title>
+  <title>Campus Parking Admin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .tab-container {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #f1f1f1;
+      border: none;
+      border-radius: 5px 5px 0 0;
+      margin-right: 5px;
+    }
+    .tab.active {
+      background-color: #4285f4;
+      color: white;
+    }
+    .content-container {
+      border: 1px solid #ddd;
+      border-radius: 0 5px 5px 5px;
+      padding: 20px;
+    }
+    .content {
+      display: none;
+    }
+    .content.active {
+      display: block;
+    }
+    .form-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #eee;
+      border-radius: 5px;
+    }
+    input, button, select {
+      margin: 5px 0;
+      padding: 8px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      cursor: pointer;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #3367d6;
+    }
+    button.removeButton {
+      background-color: #f44336;
+      width: auto;
+    }
+    .checkbox-group {
+      margin: 10px 0;
+    }
+    .checkbox-group label {
+      display: inline-block;
+      margin-right: 15px;
+    }
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .entry-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .entry-row input {
+      flex: 1;
+    }
+  </style>
 </head>
 
 <body>
-  <input type="text" id="lotName" placeholder="lot_name" />
-  <input type="text" id="lotCapacity" placeholder="Max Capacity" />
-  <input type="text" id="hourlyRate" placeholder="Hourly Rate (if applicable)" />
-  <label><input type="checkbox" name="permit" value="Commuter"> Commuter</label>
-  <label><input type="checkbox" name="permit" value="Faculty"> Faculty</label>
-  <label><input type="checkbox" name="permit" value="Housing"> Housing</label>
-  <label><input type="checkbox" name="permit" value="Visitor"> Visitor</label>
-  <label><input type="checkbox" name="permit" value="Pay Stations"> Pay Stations</label>
-  <button id="saveButton">Save Data</button>
-  <button id="readButton">Read Data</button>
+  <h1>Campus Parking & Drop-Off Admin</h1>
+  
+  <div class="tab-container">
+    <button class="tab active" data-tab="parking">Parking Data</button>
+    <button class="tab" data-tab="dropoff">Drop-Off Data</button>
+  </div>
+  
+  <div class="content-container">
+    <!-- Parking Data Tab -->
+    <div id="parking-content" class="content active">
+      <div class="form-section">
+        <h2>Basic Lot Information</h2>
+        <input type="text" id="lotId" placeholder="Lot ID (e.g., asp_lot)" required />
+        <input type="text" id="lotName" placeholder="Lot Name" required />
+        <input type="text" id="lotCapacity" placeholder="Max Capacity" required />
+        <input type="text" id="lotAddress" placeholder="Full Address" required />
+        <div class="two-column">
+          <input type="number" id="lat" step="0.000001" placeholder="Latitude (e.g., 35.2057)" required />
+          <input type="number" id="long" step="0.000001" placeholder="Longitude (e.g., -97.4438)" required />
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Walk Times (minutes)</h2>
+        <div id="walkTimesContainer">
+          <div class="walkTimeEntry entry-row">
+            <input type="text" class="destination" placeholder="Destination (e.g., bizzellLibrary)" />
+            <input type="number" class="time" placeholder="Minutes (e.g., 5)" />
+            <button class="removeButton">Remove</button>
+          </div>
+        </div>
+        <button id="addWalkTimeButton">Add Another Destination</button>
+      </div>
+
+      <div class="form-section">
+        <h2>Pass Types</h2>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="passType" value="commuter"> Commuter</label>
+          <label><input type="checkbox" name="passType" value="faculty"> Faculty</label>
+          <label><input type="checkbox" name="passType" value="housing"> Housing</label>
+          <label><input type="checkbox" name="passType" value="free"> Free</label>
+          <label><input type="checkbox" name="passType" value="paid"> Paid</label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Parking Rates</h2>
+        <div id="parkingRatesContainer">
+          <div class="rateEntry entry-row">
+            <input type="text" class="rateType" placeholder="Rate Type (e.g., Commuter)" />
+            <input type="text" class="rateValue" placeholder="Rate (e.g., $300/year)" />
+            <button class="removeButton">Remove</button>
+          </div>
+        </div>
+        <button id="addRateButton">Add Another Rate</button>
+      </div>
+
+      <div class="form-section">
+        <h2>Average Lot Capacities (%)</h2>
+        <div class="two-column">
+          <input class="capacityInput" data-time="7am" placeholder="7am %" type="number" min="0" max="100" step="1">
+          <input class="capacityInput" data-time="8am" placeholder="8am %" type="number" min="0" max="100" step="1">
+          <input class="capacityInput" data-time="9am" placeholder="9am %" type="number" min="0" max="100" step="1">
+          <input class="capacityInput" data-time="10am" placeholder="10am %" type="number" min="0" max="100" step="1">
+          <input class="capacityInput" data-time="11am" placeholder="11am %" type="number" min="0" max="100" step="1">
+          <input class="capacityInput" data-time="12pm" placeholder="12pm %" type="number" min="0" max="100" step="1">
+          <input class="capacityInput" data-time="1pm" placeholder="1pm %" type="number" min="0" max="100" step="1">
+          <input class="capacityInput" data-time="2pm" placeholder="2pm %" type="number" min="0" max="100" step="1">
+          <input class="capacityInput" data-time="3pm" placeholder="3pm %" type="number" min="0" max="100" step="1">
+          <input class="capacityInput" data-time="4pm" placeholder="4pm %" type="number" min="0" max="100" step="1">
+          <input class="capacityInput" data-time="5pm" placeholder="5pm %" type="number" min="0" max="100" step="1">
+        </div>
+      </div>
+
+      <div class="form-section">
+        <button id="fetchParkingButton">Fetch Parking Data</button>
+        <button id="saveParkingButton">Save Parking Data</button>
+      </div>
+    </div>
+
+    <!-- Drop-Off Data Tab -->
+    <div id="dropoff-content" class="content">
+      <div class="form-section">
+        <h2>Basic Drop-Off Information</h2>
+        <input type="text" id="dropId" placeholder="Drop ID (e.g., galloglyDrop)" required />
+        <input type="text" id="dropName" placeholder="Drop Name" required />
+        <input type="text" id="dropLocation" placeholder="Full Address" required />
+        <div class="two-column">
+          <input type="number" id="dropLat" step="0.000001" placeholder="Latitude (e.g., 35.2098372)" required />
+          <input type="number" id="dropLong" step="0.000001" placeholder="Longitude (e.g., -97.4423863)" required />
+        </div>
+      </div>
+
+      <div class="form-section">
+        <button id="fetchDropoffButton">Fetch Drop-Off Data</button>
+        <button id="saveDropoffButton">Save Drop-Off Data</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <button id="signInGoogleButton">Admin Sign In</button>
+    <button id="signOutButton" style="background-color: #f44336;">Sign Out</button>
+  </div>
+
   <script type="module" src="readWrite.js"></script>
 </body>
 

@@ -1,0 +1,321 @@
+// React Native Imports
+import React, { useState } from "react";
+import { Marker } from "react-native-maps";
+import MapViewCluster from "react-native-map-clustering";
+import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+// Import Custom Components
+import ThemedText from "../../components/ThemedText";
+import ThemedPageView from "../../components/ThemedPageView";
+import ThemedCard from "../../components/ThemedCard";
+import Spacer from "../../components/Spacer";
+
+// Import context provider for parking lots and dropoff spots
+import {
+  useDropoffSpots,
+  useParkingLots,
+} from "../../context/ParkingLotsContext";
+
+const Map = () => {
+  // Use the parking lots and dropoff spots context to get the data
+  const { parkingLots, loading } = useParkingLots();
+  const { dropoffSpots, loadingDrop } = useDropoffSpots();
+
+  // State variables for managing filters and dropoff visibility
+  const [showDropoffs, setShowDropoffs] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState(["commuter"]);
+
+  // Filter the parking lots based on selected filters
+  const dataToDisplay = parkingLots.filter((lot) => {
+    // Check if the lot matches ANY selected filter
+    return selectedFilters.some((filter) => lot.passTypes?.[filter] === true);
+  });
+  const dropoffsToDisplay = showDropoffs ? dropoffSpots : [];
+
+  // If the context is still loading, show a loading indicator
+  if (loading || loadingDrop) {
+    return (
+      <ThemedPageView safe={true} title="Campus Map">
+        <ActivityIndicator size="large" color="#0000ff" />
+      </ThemedPageView>
+    );
+  }
+
+  return (
+    <ThemedPageView safe={true} title="Campus Map">
+      <View style={styles.container}>
+        <MapViewCluster
+          style={styles.map}
+          initialRegion={{
+            latitude: 35.2075,
+            longitude: -97.4456,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          }}
+          showsIndoors={false}
+          showsPointsOfInterest={false}
+          showsCompass={true}
+          pitchEnabled={false}>
+          {dataToDisplay.map((lot) => {
+            return (
+              <Marker
+                key={lot.id}
+                coordinate={{
+                  latitude: lot.coordinates.lat ?? 35.2075,
+                  longitude: lot.coordinates.long ?? -97.4456,
+                }}
+                title={lot.lotName}>
+                <ThemedCard
+                  style={{
+                    backgroundColor: "white",
+                    padding: 5,
+                    alignItems: "center",
+                  }}>
+                  {/*<ThemedText>{lot.lotName}</ThemedText>*/}
+                  <Ionicons
+                    size={24}
+                    //name={focused ? "car" : "car-outline"}
+                    //color={focused ? theme.iconColorFocused : theme.iconColor}
+                    name="car"
+                  />
+                  <ThemedText>{lot.lotCapacity} spots available</ThemedText>
+                </ThemedCard>
+              </Marker>
+            );
+          })}
+          {dropoffsToDisplay.map((spot) => {
+            return (
+              <Marker
+                key={spot.id}
+                coordinate={{
+                  latitude: spot.coordinates.lat ?? 35.2075,
+                  longitude: spot.coordinates.long ?? -97.4456,
+                }}
+                title={spot.dropName}>
+                <ThemedCard
+                  style={{
+                    backgroundColor: "white",
+                    padding: 5,
+                    alignItems: "center",
+                  }}>
+                  {/*<ThemedText>{lot.lotName}</ThemedText>*/}
+                  <Ionicons
+                    size={24}
+                    //name={focused ? "car" : "car-outline"}
+                    //color={focused ? theme.iconColorFocused : theme.iconColor}
+                    name="log-in-outline"
+                  />
+                  <ThemedText>Drop Off</ThemedText>
+                </ThemedCard>
+              </Marker>
+            );
+          })}
+        </MapViewCluster>
+        {showFilters && (
+          <View style={styles.filterView}>
+            <ThemedText style={{ color: "black", fontWeight: "bold" }}>
+              Filters
+            </ThemedText>
+            <Spacer height={10} />
+            <View
+              style={{
+                flexDirection: "row",
+                paddingBottom: 10,
+              }}>
+              <BouncyCheckbox
+                isChecked={true}
+                onPress={(isChecked) => {
+                  setSelectedFilters((prev) =>
+                    isChecked
+                      ? [...prev, "commuter"]
+                      : prev.filter((item) => item !== "commuter")
+                  );
+                }}
+              />
+              <ThemedText
+                style={{
+                  marginTop: 5,
+                  marginLeft: -5,
+                  color: "black",
+                  fontWeight: "bold",
+                }}>
+                Commuter Lots
+              </ThemedText>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingBottom: 10,
+              }}>
+              <BouncyCheckbox
+                onPress={(isChecked) => {
+                  setSelectedFilters((prev) =>
+                    isChecked
+                      ? [...prev, "housing"]
+                      : prev.filter((item) => item !== "housing")
+                  );
+                }}
+              />
+              <ThemedText
+                style={{
+                  marginTop: 5,
+                  marginLeft: -5,
+                  color: "black",
+                  fontWeight: "bold",
+                }}>
+                Housing Lots
+              </ThemedText>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingBottom: 10,
+              }}>
+              <BouncyCheckbox
+                onPress={(isChecked) => {
+                  setSelectedFilters((prev) =>
+                    isChecked
+                      ? [...prev, "faculty"]
+                      : prev.filter((item) => item !== "faculty")
+                  );
+                }}
+              />
+              <ThemedText
+                style={{
+                  marginTop: 5,
+                  marginLeft: -5,
+                  color: "black",
+                  fontWeight: "bold",
+                }}>
+                Faculty Lots
+              </ThemedText>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingBottom: 10,
+              }}>
+              <BouncyCheckbox
+                onPress={(isChecked) => {
+                  setSelectedFilters((prev) =>
+                    isChecked
+                      ? [...prev, "paid"]
+                      : prev.filter((item) => item !== "paid")
+                  );
+                }}
+              />
+              <ThemedText
+                style={{
+                  marginTop: 5,
+                  marginLeft: -5,
+                  color: "black",
+                  fontWeight: "bold",
+                }}>
+                Paid Lots
+              </ThemedText>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingBottom: 10,
+              }}>
+              <BouncyCheckbox
+                onPress={(isChecked) => {
+                  setSelectedFilters((prev) =>
+                    isChecked
+                      ? [...prev, "free"]
+                      : prev.filter((item) => item !== "free")
+                  );
+                }}
+              />
+              <ThemedText
+                style={{
+                  marginTop: 5,
+                  marginLeft: -5,
+                  color: "black",
+                  fontWeight: "bold",
+                }}>
+                Free Lots
+              </ThemedText>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingBottom: 10,
+              }}>
+              <BouncyCheckbox
+                onPress={(isChecked) => {
+                  setShowDropoffs(!showDropoffs);
+                }}
+              />
+              <ThemedText
+                style={{
+                  marginTop: 5,
+                  marginLeft: -5,
+                  color: "black",
+                  fontWeight: "bold",
+                }}>
+                Drop-off Locations
+              </ThemedText>
+            </View>
+          </View>
+        )}
+
+        <TouchableOpacity
+          style={styles.filterButton}
+          onPress={() => setShowFilters(!showFilters)}>
+          <ThemedText style={{ color: "white", fontWeight: "bold" }}>
+            {showFilters ? "Close Filters" : "Open Filters"}
+          </ThemedText>
+        </TouchableOpacity>
+      </View>
+    </ThemedPageView>
+  );
+};
+
+export default Map;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  map: {
+    flex: 1,
+  },
+  filterButton: {
+    position: "absolute",
+    bottom: 30,
+    left: 20,
+    backgroundColor: "#003B67",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    elevation: 5, // Android shadow
+    shadowColor: "#000", // iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  filterView: {
+    position: "absolute",
+    bottom: 80,
+    left: 20,
+    backgroundColor: "#fff",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    elevation: 5, // Android shadow
+    shadowColor: "#000", // iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+});
