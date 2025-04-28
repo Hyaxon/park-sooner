@@ -24,7 +24,14 @@ export default ThemedCard;
 const styles = StyleSheet.create({
   card: {
     borderRadius: 15,
+    width: "90%",
     padding: 20,
     overflow: "hidden",
   },
+
+  // login_page: {
+  //   padding: 18,
+  //   borderRadius: 6,
+  //   marginVertical: 10,
+  // }
 });

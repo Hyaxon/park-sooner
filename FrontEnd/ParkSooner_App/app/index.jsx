@@ -13,6 +13,7 @@ import ThemedView from "../components/ThemedView";
 import Spacer from "../components/Spacer";
 import ThemedText from "../components/ThemedText";
 import ThemedCard from "../components/ThemedCard";
+import ThemedButton from "../components/ThemedButton";
 
 // This is the main entry point for the app
 const Home = () => {
@@ -51,8 +52,14 @@ const Home = () => {
         ParkSooner
       </ThemedText>
       <Spacer height={30} />
-      <ThemedCard>
-        <Link href="/login">Login Page</Link>
+      {/* <ThemedButton onPress={() => router.push("/login")} style={styles.btn}>
+        <ThemedText style={{ color: "black" }} title={true}>
+          Login
+        </ThemedText>
+      </ThemedButton> */}
+
+      <ThemedCard style= {styles.login_btn}>
+        <Link href="/login">Login</Link>
       </ThemedCard>
 
       {/*<Link href="/lots">Lots Page</Link>]*/}
@@ -76,4 +83,14 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
   },
+
+  login_btn: {
+    width: "25%",
+    alignItems: "center",
+    padding: 18,
+    borderRadius: 10,
+    marginVertical: 10,
+    borderColor: "Black",
+    borderWidth: 0,
+  }
 });
