@@ -32,7 +32,6 @@ const Register = () => {
   // Signs the user up with email and password
   // If successful, redirects to the /lots page
   const signUp = async () => {
-
     if (password !== confirmPassword) {
       alert("Passwords do not match. Please try again.");
       return;
@@ -44,14 +43,14 @@ const Register = () => {
         password
       );
       if (userCredential) {
-        router.replace("/login");
+        router.replace("/lots");
       }
-    // } catch (error) {
-    //   console.log(error);
-    //   alert("Sign up failed: " + error.message);
-    // }
+      // } catch (error) {
+      //   console.log(error);
+      //   alert("Sign up failed: " + error.message);
+      // }
     } catch (error) {
-      if(error.code === "auth/email-already-in-use") {
+      if (error.code === "auth/email-already-in-use") {
         alert("Email already in use. Please try a different email.");
       }
       // else if(error.code === "auth/invalid-email") {
@@ -66,7 +65,10 @@ const Register = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ThemedView style={styles.container}>
-      <Image source={require("../../assets/img/ParkSoonerLogoSmall.png")} style={{ width: 100, height: 100 }} />
+        <Image
+          source={require("../../assets/img/ParkSoonerLogoSmall.png")}
+          style={{ width: 100, height: 100 }}
+        />
         <Spacer />
         <ThemedText
           title={true}
@@ -76,16 +78,14 @@ const Register = () => {
 
         <Spacer height={10} />
 
-        <ThemedCard> 
-          <TextInput 
-            
-              placeholder="Enter new email"
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              keyboardType="email-address"  
-              />
-
+        <ThemedCard>
+          <TextInput
+            placeholder="Enter new email"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
         </ThemedCard>
         <Spacer height={20} />
         <ThemedCard>
@@ -93,33 +93,36 @@ const Register = () => {
             placeholder="Enter new password"
             value={password}
             secureTextEntry={true}
-            onChangeText={setPassword}  
-
-            />
-          </ThemedCard>
+            onChangeText={setPassword}
+          />
+        </ThemedCard>
 
         <Spacer height={20} />
 
-        <ThemedCard> 
-          <TextInput 
+        <ThemedCard>
+          <TextInput
             placeholder="Confirm new password"
             value={confirmPassword}
             secureTextEntry={true}
-            onChangeText={setConfirmPassword}  
-            />
+            onChangeText={setConfirmPassword}
+          />
         </ThemedCard>
         <Spacer height={10} />
 
         <ThemedButton onPress={signUp}>
-          <Text style={{color: "#f2f2f2", textAlign: "center"}}>Sign Up</Text>
+          <Text style={{ color: "#f2f2f2", textAlign: "center" }}>Sign Up</Text>
         </ThemedButton>
 
-        <Spacer height= {50} />
-        <ThemedText style={{textAlign: "center"}}>Already have an account?</ThemedText>
+        <Spacer height={50} />
+        <ThemedText style={{ textAlign: "center" }}>
+          Already have an account?
+        </ThemedText>
         <Spacer height={10} />
 
         <Link href="/login">
-          <ThemedText style={{textAlign: "center", color: "#0a74d3"}}>Login here</ThemedText>
+          <ThemedText style={{ textAlign: "center", color: "#0a74d3" }}>
+            Login here
+          </ThemedText>
         </Link>
 
         {/* <ThemedCard>
