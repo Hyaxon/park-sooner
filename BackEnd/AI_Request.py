@@ -4,6 +4,8 @@ from dotenv import load_dotenv, dotenv_values
 import datetime
 import openai
 from openai import OpenAI
+from Parker_Fetch_Data import prompt
+
 
 load_dotenv()
 
@@ -25,7 +27,7 @@ def throttle(interval):
 @throttle(120)
 def system_request():
 
-    messages = [{"role": "system", "content": "You make parking predictions based on current parking data."}]
+    messages = [{"role": "system", "content": prompt}] #put all the database stuff in here
 
     while True:
         message = input("User : ")
@@ -35,7 +37,7 @@ def system_request():
                 model="gpt-4.1-nano",
                 messages=messages,
                 temperature=0.3,
-                max_tokens=50
+                max_tokens=200
             )
             reply = response.choices[0].message.content
             print("Parker : ", reply)
