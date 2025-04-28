@@ -37,7 +37,7 @@ const Chat = () => {
 
   const [input, setInput] = useState("");
 
-  const sendMessage = async () => {
+  const sendMessage = () => {
     if (input.trim() == "") {
       return;
     }
@@ -51,31 +51,12 @@ const Chat = () => {
     setInput("");
 
     // Temporary response from Parker until AI is implemented
-    try {
-      // Send message to chat endpoint
-      const response = await fetch("http://localhost:8000/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: inputMessage,
-          activity: activityProfile.activityName,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.status === "success") {
-        const botResponse = {
-          message: data.message,
-          sender: "bot",
-        };
-        setMessages((prev) => [...prev, botResponse]);
-      }
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        { sender: "Parker", message: "Got it! Let me find that info..." },
+      ]);
+    }, 1000);
   };
 
   return (
