@@ -76,12 +76,18 @@ const Settings = () => {
         <Link href="/settings" style={styles.settingsLink}>
           <ThemedText>Report Issue</ThemedText>
         </Link>
-        <Spacer height={175} />
+        <Spacer height={150} />
         <ThemedButton style={styles.button} onPress={() => auth.signOut()}>
-          <Text>Sign Out</Text>
+          {/* <Text style= {{textAlign: "center"}}>Sign Out</Text> */}
+          <ThemedText style={{ color: "#f2f2f2", textAlign: "center" }}>
+            Sign Out
+          </ThemedText>
         </ThemedButton>
         <ThemedButton style={styles.button} onPress={handleDeleteAccount}>
-          <Text>Delete Account</Text>
+          {/* <Text style= {{textAlign: "center"}}>Delete Account</Text> */}
+          <ThemedText style={{ color: "#f2f2f2", textAlign: "center" }}>
+            Delete Account
+          </ThemedText>
         </ThemedButton>
       </View>
       <Spacer height={100} />
@@ -98,7 +104,8 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 25,
-    backgroundColor: "#FF0000",
+    textAlign: "center",
+    backgroundColor: "#0a74d3",
     padding: 15,
     marginHorizontal: 40,
     borderRadius: 5,
