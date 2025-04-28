@@ -1,9 +1,18 @@
+// React Native Imports
 import { StyleSheet, View, useColorScheme } from "react-native";
-import { Colors } from "../constants/Colors";
-import ThemedText from "./ThemedText";
-import ThemedCard from "./ThemedCard";
-import Spacer from "./Spacer";
 
+// Custom Imports
+import { Colors } from "../constants/Colors";
+
+// Custom Components Imports
+import ThemedText from "./ThemedText";
+
+// Themed Lot Card Component
+// A reusable rounded card for the lots page that displays relevant information from props, including:
+// - Lot name
+// - Lot address
+// - Number of spots available
+// - Percent full by hour represented as a bar graph
 const ThemedLotCard = ({
   style,
   lotName,
@@ -12,13 +21,16 @@ const ThemedLotCard = ({
   percentFullByHour,
   ...props
 }) => {
+  // Get the current color scheme (light or dark)
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme] ?? Colors.light;
 
+  // Define the maximum height of a bar for the bar graph
   const maxBarHeight = 100;
   return (
     <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
       <View style={{ flexDirection: "column" }}>
+        {/* Card Header */}
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <View>
             <ThemedText style={{ fontSize: 16, fontWeight: "bold" }}>
@@ -55,6 +67,7 @@ const ThemedLotCard = ({
           </View>
         </View>
 
+        {/* Divider */}
         <View
           style={{
             borderBottomWidth: 1,
@@ -63,6 +76,7 @@ const ThemedLotCard = ({
           }}
         />
 
+        {/* Bar Graph */}
         <View
           style={{
             flexDirection: "row",
@@ -70,23 +84,29 @@ const ThemedLotCard = ({
             justifyContent: "space-between",
             marginTop: 10,
           }}>
-          {percentFullByHour.map((percent, index) => (
-            <View key={index}>
-              <View
-                style={{
-                  width: 20,
-                  height: ((percent ?? 10) / 100) * maxBarHeight,
+          {
+            // Map through the percentFullByHour array and create a bar for each hour
+            percentFullByHour.map((percent, index) => (
+              <View key={index}>
+                <View
+                  style={{
+                    width: 20,
+                    height: ((percent ?? 10) / 100) * maxBarHeight,
 
-                  backgroundColor: theme.primary,
-                  marginHorizontal: 2,
-                }}
-              />
-              <ThemedText
-                style={{ textAlign: "center", color: theme.subtitle }}>
-                {index + 7 > 12 ? `${index - 5}` : `${index + 7}`}
-              </ThemedText>
-            </View>
-          ))}
+                    backgroundColor: theme.primary,
+                    marginHorizontal: 2,
+                  }}
+                />
+                <ThemedText
+                  style={{ textAlign: "center", color: theme.subtitle }}>
+                  {
+                    // Calculate the hour based on the index
+                    index + 7 > 12 ? `${index - 5}` : `${index + 7}`
+                  }
+                </ThemedText>
+              </View>
+            ))
+          }
         </View>
         <View
           style={{

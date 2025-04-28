@@ -1,8 +1,9 @@
+// React Native Imports
 import React, { useState } from "react";
 import { Marker } from "react-native-maps";
 import MapViewCluster from "react-native-map-clustering";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-
+import { Ionicons } from "@expo/vector-icons";
 import {
   StyleSheet,
   ActivityIndicator,
@@ -10,48 +11,37 @@ import {
   View,
 } from "react-native";
 
+// Import Custom Components
 import ThemedText from "../../components/ThemedText";
 import ThemedPageView from "../../components/ThemedPageView";
 import ThemedCard from "../../components/ThemedCard";
-
-import { useParkingLots } from "../../context/ParkingLotsContext";
 import Spacer from "../../components/Spacer";
 
-const FILTERS = ["housing", "faculty", "commuter", "paid", "free", "dropoff"];
+// Import context provider for parking lots and dropoff spots
+import {
+  useDropoffSpots,
+  useParkingLots,
+} from "../../context/ParkingLotsContext";
 
 const Map = () => {
+  // Use the parking lots and dropoff spots context to get the data
   const { parkingLots, loading } = useParkingLots();
+  const { dropoffSpots, loadingDrop } = useDropoffSpots();
 
-  const [showParkingLots, setShowParkingLots] = useState(true);
-
+  // State variables for managing filters and dropoff visibility
+  const [showDropoffs, setShowDropoffs] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-
   const [selectedFilters, setSelectedFilters] = useState(["commuter"]);
 
-  const otherLots = [
-    {
-      id: "1",
-      lotName: "Test Lot",
-      coordinates: { lat: 35.208, long: -97.446 },
-      lotCapacity: 50,
-    },
-  ];
-
-  const lotDataMap = {
-    commuter: parkingLots.filter((lot) => lot.passTypes === "commuter"),
-    housing: parkingLots.filter((lot) => lot.type === "housing"),
-    faculty: parkingLots.filter((lot) => lot.type === "faculty"),
-    paid: parkingLots.filter((lot) => lot.isPaid),
-    free: parkingLots.filter((lot) => lot.isFree),
-    dropoff: parkingLots.filter((lot) => lot.isDropoff),
-  };
-
+  // Filter the parking lots based on selected filters
   const dataToDisplay = parkingLots.filter((lot) => {
     // Check if the lot matches ANY selected filter
     return selectedFilters.some((filter) => lot.passTypes?.[filter] === true);
   });
+  const dropoffsToDisplay = showDropoffs ? dropoffSpots : [];
 
-  if (loading) {
+  // If the context is still loading, show a loading indicator
+  if (loading || loadingDrop) {
     return (
       <ThemedPageView safe={true} title="Campus Map">
         <ActivityIndicator size="large" color="#0000ff" />
@@ -83,9 +73,47 @@ const Map = () => {
                   longitude: lot.coordinates.long ?? -97.4456,
                 }}
                 title={lot.lotName}>
-                <ThemedCard style={{ backgroundColor: "white", padding: 5 }}>
+                <ThemedCard
+                  style={{
+                    backgroundColor: "white",
+                    padding: 5,
+                    alignItems: "center",
+                  }}>
                   {/*<ThemedText>{lot.lotName}</ThemedText>*/}
+                  <Ionicons
+                    size={24}
+                    //name={focused ? "car" : "car-outline"}
+                    //color={focused ? theme.iconColorFocused : theme.iconColor}
+                    name="car"
+                  />
                   <ThemedText>{lot.lotCapacity} spots available</ThemedText>
+                </ThemedCard>
+              </Marker>
+            );
+          })}
+          {dropoffsToDisplay.map((spot) => {
+            return (
+              <Marker
+                key={spot.id}
+                coordinate={{
+                  latitude: spot.coordinates.lat ?? 35.2075,
+                  longitude: spot.coordinates.long ?? -97.4456,
+                }}
+                title={spot.dropName}>
+                <ThemedCard
+                  style={{
+                    backgroundColor: "white",
+                    padding: 5,
+                    alignItems: "center",
+                  }}>
+                  {/*<ThemedText>{lot.lotName}</ThemedText>*/}
+                  <Ionicons
+                    size={24}
+                    //name={focused ? "car" : "car-outline"}
+                    //color={focused ? theme.iconColorFocused : theme.iconColor}
+                    name="log-in-outline"
+                  />
+                  <ThemedText>Drop Off</ThemedText>
                 </ThemedCard>
               </Marker>
             );
@@ -223,7 +251,11 @@ const Map = () => {
                 flexDirection: "row",
                 paddingBottom: 10,
               }}>
-              <BouncyCheckbox onPress={(isChecked) => {}} />
+              <BouncyCheckbox
+                onPress={(isChecked) => {
+                  setShowDropoffs(!showDropoffs);
+                }}
+              />
               <ThemedText
                 style={{
                   marginTop: 5,

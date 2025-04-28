@@ -1,7 +1,10 @@
-import React from "react";
+// React Native Imports
 import { View, Text, StyleSheet } from "react-native";
 
+// ChatBubble Component
+// Takes in a sender and message as props
 const ChatBubble = ({ sender, message }) => {
+  // Determine if the message is sent or received
   const isSent = sender === "You";
 
   return (
